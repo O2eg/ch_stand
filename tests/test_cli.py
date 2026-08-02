@@ -28,10 +28,11 @@ def test_init_materializes_profiles_without_a_config(tmp_path: Path, capsys) -> 
 def test_machine_capabilities_use_a_versioned_envelope(capsys) -> None:
     assert main(["--machine", "--request-id", "test-1", "--component-capabilities"]) == 0
     result = json.loads(capsys.readouterr().out)
-    assert result["contract_version"] == "pg_play/component/v1"
+    assert result["contract_version"] == "ch_play/component/v1"
     assert result["component"] == "ch_stand"
     assert result["request_id"] == "test-1"
     assert result["result"]["config_schemas"] == ["ch_stand/v1"]
+    assert result["result"]["commands"]["active"]["mutates_target"] is False
 
 
 def test_machine_mode_rejects_arbitrary_sql(capsys) -> None:

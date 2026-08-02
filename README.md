@@ -434,7 +434,7 @@ ch-stand --machine --request-id stand-002 -c stand.yaml validate
 ch-stand --machine --request-id stand-003 -c stand.yaml plan
 ```
 
-The envelope is `pg_play/component/v1`, capabilities are `pg_play/capabilities/v1`, and the stand
+The envelope is `ch_play/component/v1`, capabilities are `ch_play/capabilities/v1`, and the stand
 artifact schema remains ClickHouse-specific `ch_stand/v1`. Arbitrary SQL, interactive SSH, and
 password output are unavailable in machine mode.
 
@@ -459,7 +459,7 @@ Build and inspect release artifacts:
 .venv/bin/python -m twine check dist/*
 ```
 
-A tag matching the package version, for example `v0.1.0`, runs unit and Docker integration tests,
+A tag matching the package version, for example `v0.1.1`, runs unit and Docker integration tests,
 builds the wheel and source distribution, smoke-tests the installed wheel, and publishes through
 PyPI Trusted Publishing. Before the first release, configure the GitHub `pypi` environment and a
 PyPI trusted publisher for repository `O2eg/ch_stand` and workflow

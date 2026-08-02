@@ -6,8 +6,8 @@ from typing import Any
 
 from ch_stand import __version__
 
-CONTRACT_VERSION = "pg_play/component/v1"
-CAPABILITY_SCHEMA_VERSION = "pg_play/capabilities/v1"
+CONTRACT_VERSION = "ch_play/component/v1"
+CAPABILITY_SCHEMA_VERSION = "ch_play/capabilities/v1"
 COMPONENT = "ch_stand"
 
 EXIT_CODES = {
@@ -29,7 +29,15 @@ def static_capabilities() -> dict[str, Any]:
             "machine_output": True,
             "accepts_plan_hash": False,
         }
-        for command in ("capabilities", "validate", "show", "plan", "status", "health")
+        for command in (
+            "capabilities",
+            "active",
+            "validate",
+            "show",
+            "plan",
+            "status",
+            "health",
+        )
     }
     mutating = {
         command: {
