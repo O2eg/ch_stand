@@ -1,0 +1,49 @@
+api_version: ch_stand/v1
+kind: ClickHouseStand
+
+metadata:
+  name: ch-stand-2s2r
+
+spec:
+  clickhouse:
+    version: "25.8.28.1"
+    cluster_name: ch_stand_2s2r
+    database: default
+    user: default
+    settings:
+      max_threads: 4
+      log_queries: true
+      log_query_threads: true
+
+  topology:
+    shards: 2
+    replicas: 2
+    keeper_nodes: 3
+
+  docker:
+    pull_policy: missing
+    labels:
+      io.ch-stand.profile: sharded-replicated-4
+
+  storage:
+    root_directory: .ch_stand/ch-stand-2s2r
+
+  ports:
+    bind_address: 127.0.0.1
+    http_base: 18140
+    native_base: 19020
+    ssh_base: 12240
+    keeper_base: 19181
+
+  resources:
+    server:
+      cpu_limit: 1.0
+      memory_limit: 2g
+      shm_size: 256m
+    keeper:
+      cpu_limit: 0.5
+      memory_limit: 512m
+      shm_size: 128m
+
+  diagnostics:
+    perf: true

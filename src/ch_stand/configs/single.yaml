@@ -1,0 +1,49 @@
+api_version: ch_stand/v1
+kind: ClickHouseStand
+
+metadata:
+  name: ch-stand-single
+
+spec:
+  clickhouse:
+    version: "25.8.28.1"
+    cluster_name: ch_stand_single
+    database: default
+    user: default
+    settings:
+      max_threads: 4
+      log_queries: true
+      log_query_threads: true
+
+  topology:
+    shards: 1
+    replicas: 1
+    keeper_nodes: 0
+
+  docker:
+    pull_policy: missing
+    labels:
+      io.ch-stand.profile: single
+
+  storage:
+    root_directory: .ch_stand/ch-stand-single
+
+  ports:
+    bind_address: 127.0.0.1
+    http_base: 18123
+    native_base: 19000
+    ssh_base: 12220
+    keeper_base: 19181
+
+  resources:
+    server:
+      cpu_limit: 1.0
+      memory_limit: 2g
+      shm_size: 256m
+    keeper:
+      cpu_limit: 0.5
+      memory_limit: 512m
+      shm_size: 128m
+
+  diagnostics:
+    perf: true

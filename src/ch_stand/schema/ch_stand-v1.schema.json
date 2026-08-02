@@ -1,0 +1,132 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/O2eg/ch_stand/schema/ch_stand-v1.schema.json",
+  "title": "ch-stand declarative ClickHouse stand",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["api_version", "kind", "metadata", "spec"],
+  "properties": {
+    "api_version": {"const": "ch_stand/v1"},
+    "kind": {"const": "ClickHouseStand"},
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name"],
+      "properties": {
+        "name": {"type": "string", "pattern": "^[a-z][a-z0-9_-]{1,31}$"}
+      }
+    },
+    "spec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["clickhouse", "topology"],
+      "properties": {
+        "clickhouse": {"$ref": "#/$defs/clickhouse"},
+        "topology": {"$ref": "#/$defs/topology"},
+        "docker": {"$ref": "#/$defs/docker"},
+        "storage": {"$ref": "#/$defs/storage"},
+        "ports": {"$ref": "#/$defs/ports"},
+        "resources": {"$ref": "#/$defs/resources"},
+        "diagnostics": {"$ref": "#/$defs/diagnostics"}
+      }
+    }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[A-Za-z_][A-Za-z0-9_]{0,62}$"
+    },
+    "clickhouse": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "version": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9._-]{0,63}$",
+          "not": {"pattern": "-alpine$"}
+        },
+        "image": {"type": "string", "minLength": 1, "not": {"pattern": "-alpine$"}},
+        "database": {"$ref": "#/$defs/identifier"},
+        "user": {"$ref": "#/$defs/identifier"},
+        "cluster_name": {"$ref": "#/$defs/identifier"},
+        "settings": {
+          "type": "object",
+          "propertyNames": {"pattern": "^[a-z][a-z0-9_]*$"},
+          "additionalProperties": {"type": ["string", "number", "boolean"]}
+        }
+      }
+    },
+    "topology": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["shards", "replicas"],
+      "properties": {
+        "shards": {"type": "integer", "minimum": 1, "maximum": 16},
+        "replicas": {"type": "integer", "minimum": 1, "maximum": 4},
+        "keeper_nodes": {"type": "integer", "enum": [0, 3]}
+      }
+    },
+    "docker": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "pull_policy": {"enum": ["always", "missing", "never"]},
+        "network_name": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_-]*-ch-stand-managed$",
+          "maxLength": 63
+        },
+        "labels": {
+          "type": "object",
+          "additionalProperties": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "storage": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "root_directory": {
+          "type": "string",
+          "minLength": 1,
+          "not": {"pattern": "(?:^/|^\\.$|(?:^|/)\\.\\.(?:/|$))"}
+        }
+      }
+    },
+    "ports": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "bind_address": {"type": "string", "minLength": 1},
+        "http_base": {"type": "integer", "minimum": 1, "maximum": 65535},
+        "native_base": {"type": "integer", "minimum": 1, "maximum": 65535},
+        "ssh_base": {"type": "integer", "minimum": 1, "maximum": 65535},
+        "keeper_base": {"type": "integer", "minimum": 1, "maximum": 65535}
+      }
+    },
+    "resource": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "cpu_limit": {"type": "number", "exclusiveMinimum": 0},
+        "memory_limit": {"type": "string", "pattern": "^[1-9][0-9]*(?:[bBkKmMgG])?$"},
+        "shm_size": {"type": "string", "pattern": "^[1-9][0-9]*(?:[bBkKmMgG])?$"}
+      }
+    },
+    "resources": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "server": {"$ref": "#/$defs/resource"},
+        "keeper": {"$ref": "#/$defs/resource"}
+      }
+    },
+    "diagnostics": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "perf": {"type": "boolean"}
+      }
+    }
+  }
+}

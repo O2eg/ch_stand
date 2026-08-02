@@ -1,0 +1,90 @@
+[build-system]
+requires = ["setuptools>=77.0.3"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ch-stand"
+version = "0.1.0"
+description = "Declarative Docker testbed manager for ClickHouse clusters"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [
+  { name = "O2eg", email = "oleg.ispu@yandex.ru" },
+]
+keywords = ["clickhouse", "docker", "replication", "sharding", "testing", "dba"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Intended Audience :: System Administrators",
+  "Operating System :: POSIX :: Linux",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Database",
+  "Topic :: Software Development :: Testing",
+  "Topic :: System :: Systems Administration",
+]
+dependencies = [
+  "docker>=7.0,<8",
+  "PyYAML>=6.0,<7",
+]
+
+[project.optional-dependencies]
+test = [
+  "pytest>=8.3,<9",
+  "tomli>=2.0; python_version < '3.11'",
+]
+dev = [
+  "build>=1.2,<2",
+  "pytest>=8.3,<9",
+  "pytest-cov>=6,<8",
+  "ruff>=0.12,<1",
+  "tomli>=2.0; python_version < '3.11'",
+  "twine>=6,<7",
+]
+
+[project.scripts]
+ch-stand = "ch_stand.cli:main"
+
+[project.urls]
+Homepage = "https://o2eg.com/"
+Repository = "https://github.com/O2eg/ch_stand"
+Issues = "https://github.com/O2eg/ch_stand/issues"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+include-package-data = false
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["ch_stand*"]
+namespaces = false
+
+[tool.setuptools.package-data]
+ch_stand = [
+  ".dockerignore",
+  "configs/*.yaml",
+  "docker/Dockerfile",
+  "docker/*.sh",
+  "schema/*.json",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["ch_stand"]
+known-third-party = ["docker"]
